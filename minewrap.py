@@ -1,5 +1,6 @@
 import io
 import os
+import subprocess
 
 
 def parseProps(filepath):
@@ -53,14 +54,26 @@ class Shell:
       and then returns it '''
     return raw_input('>').split()
 
+  def start(self):
+    i = getInput()
+    if i in cmds:
+      self.cmds[f](i)
+    else:
+      print 'command not recognized: ' + i[0]
+      # throw exception
+
 class Engine:
-  java_home = ''
+  java_cmd = 'java'
+  server_jar_name = 'minecraft.jar'
+  server_start_base_opts = ['-jar', server_jar_name]
 
   def __init__(self, servers):
     self.servers = servers
 
   def startServer(self, server, opts=[]):
-    pass
+    print 'starting server: ' + server.name
+    serverLog = open('server.out', 'wb')
+    subprocess.check_call(java_cmd, server_start_base_opts + opts, stdout=serverLog, stderr=serverLog)
 
   def stopServer(self, server):
     pass
@@ -70,6 +83,8 @@ class Engine:
     startServer(server, opts)
 
   def infoServer(self, server):
+    for prop in server.props:
+      print str(prop)
     pass
 
   def invokeJava(self, cmds):
@@ -84,7 +99,7 @@ class Server:
   def updateProp(self, key, value):
     self.prop[key] = value
 
-  def writeProps(self
+  def writeProps(self):
     pass
 
   def loadProps(self):
