@@ -9,9 +9,12 @@ def parseProps(filepath):
   lines = file.readlines()
   for line in lines:
     # possible problem if any props contain a =
+    if line[0] == '#':
+      continue
     line = line.strip().split('=')
     if len(line) != 2:
-      print 'bad properties file - keep going'
+      print 'bad property - keep going'
+      print '  ' + str(line)
       continue
     props[line[0]] = line[1]
   return props
@@ -46,35 +49,31 @@ class Shell:
     }
 
   def getInput(self):
-  ''' Grabs the input from the user, parses it
+    ''' Grabs the input from the user, parses it
       and then returns it '''
-    cmd = raw_input('>')
-    return cmd
-
-  def parseCmd(cmd):
-  ''' parses a string into a list, each element
-      will contain an argument '''
-    # should parse the input string and return a list of args
-    pass
-
+    return raw_input('>').split()
 
 class Engine:
+  java_home = ''
 
   def __init__(self, servers):
     self.servers = servers
 
-  def startServer(self, server, opts={}):
+  def startServer(self, server, opts=[]):
     pass
 
   def stopServer(self, server):
     pass
 
-  def restartServer(self, server, opts={}):
+  def restartServer(self, server, opts=[]):
     stopServer(server)
     startServer(server, opts)
 
   def infoServer(self, server):
     pass
+
+  def invokeJava(self, cmds):
+    pass 
 
 class Server:
   started = False
@@ -83,9 +82,12 @@ class Server:
     self.props = props
 
   def updateProp(self, key, value):
+    self.prop[key] = value
+
+  def writeProps(self
     pass
 
-  def updateProps(self, props):
+  def loadProps(self):
     pass
 
 # DO STUFF HERE
