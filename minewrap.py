@@ -55,12 +55,15 @@ class Shell:
     return raw_input('>').split()
 
   def start(self):
-    i = getInput()
-    if i in cmds:
-      self.cmds[f](i)
-    else:
-      print 'command not recognized: ' + i[0]
-      # throw exception
+    while(True):
+      i = self.getInput()
+      if i == 'exit':
+        exit(0)
+      if len(i) > 1 and i[0] in self.cmds:
+        self.cmds[i[0]](i[1], i[2:])
+      else:
+        print 'command not recognized: ' + str(i)
+        # throw exception
 
 class Engine:
   java_cmd = 'java'
@@ -70,7 +73,12 @@ class Engine:
   def __init__(self, servers):
     self.servers = servers
 
-  def startServer(self, server, opts=[]):
+  def startServer(self, servern, opts=[]):
+    if type(servern) is str:
+      server = self.restoreServer(servern)
+    if server is None:
+      print 'server %s does not exist!' % servern
+      return
     print 'starting server: ' + server.name
     serverLog = open('server.out', 'wb')
     subprocess.check_call(java_cmd, server_start_base_opts + opts, stdout=serverLog, stderr=serverLog)
@@ -88,7 +96,12 @@ class Engine:
     pass
 
   def invokeJava(self, cmds):
-    pass 
+    pass
+
+  def restoreServer(self, serverName):
+    server = [item for item in self.servers if item.name == serverName]
+    if len(server) == 1:
+      return server[0]
 
 class Server:
   started = False
@@ -105,7 +118,10 @@ class Server:
   def loadProps(self):
     pass
 
-# DO STUFF HERE
-for item in loadServers():
-  print item.name
 
+########## DO STUFF HERE ##########
+servers = loadServers()
+eng = Engine(servers)
+
+shell = Shell(eng)
+shell.start()
