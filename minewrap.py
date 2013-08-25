@@ -74,13 +74,14 @@ class Engine:
     'tekkit'  : 'Tekkit.jar'
   }
 
+  serverProcesses = {}
+
   def __init__(self, servers):
     self.servers = servers
 
   def startServer(self, opts):
-    print "opts " + str(opts)
     servern = opts[1]
-    opts = opts[1:]
+    opts = opts[2:]
     if type(servern) is str:
       server = self.restoreServer(servern)
     if server is None:
@@ -88,17 +89,32 @@ class Engine:
       return
     print 'starting server: ' + server.name
 
+    opts.append('nogui')
+
     cmd = [self.javacmd]
-    cmd.extend(opts)
     cmd.append('-jar')
     mod = self.modRegistry[server.mod]
     cmd.append(mod)
 
-    serverLog = open('server.out', 'wb')
-    subprocess.check_call(cmd, stdout = serverLog, stderr = serverLog)
+    cmd.extend(opts)
+    
+    serverLog = open('servers/'+servern+'/server.out', 'wb')
+    print "[DEBUG] "+str(cmd)
+    serverProcess = subprocess.Popen(cmd, stdout=serverLog, stderr=serverLog, cwd='servers/'+servern)
+    self.serverProcesses[server.name] = serverProcess
 
-  def stopServer(self, server):
-    pass
+  def stopServer(self, opts):
+    server = opts[1]
+    if type(server) is str:
+      server = self.restoreServer(server)
+    if server is None: 
+      print 'server %s does not exist!' % servern 
+      return
+    print '[DEBUG] ' + str(server)
+    serverProcess = self.serverProcesses[server.name]
+    print 'stopping server: ' + server.name
+    serverProcess.terminate()
+    
 
   def restartServer(self, server, opts=[]):
     stopServer(server)
