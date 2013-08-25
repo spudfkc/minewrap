@@ -46,7 +46,8 @@ class Shell:
       'start' : engine.startServer,
       'stop' : engine.stopServer,
       'restart' : engine.restartServer,
-      'info' : engine.infoServer
+      'info' : engine.infoServer,
+      'list' : engine.listServers
     }
 
   def getInput(self):
@@ -59,29 +60,42 @@ class Shell:
       i = self.getInput()
       if i == 'exit':
         exit(0)
-      if len(i) > 1 and i[0] in self.cmds:
-        self.cmds[i[0]](i[1], i[2:])
+      if len(i) > 0 and i[0] in self.cmds:
+        self.cmds[i[0]](i[0:])
+        # self.cmds[i[0]](i[1], i[2:])
       else:
         print 'command not recognized: ' + str(i)
         # throw exception
 
 class Engine:
-  java_cmd = 'java'
-  server_jar_name = 'minecraft.jar'
-  server_start_base_opts = ['-jar', server_jar_name]
+  javacmd = 'java'
+  modRegistry = {
+    'vanilla' : 'minecraft.jar',
+    'tekkit'  : 'Tekkit.jar'
+  }
 
   def __init__(self, servers):
     self.servers = servers
 
-  def startServer(self, servern, opts=[]):
+  def startServer(self, opts):
+    print "opts " + str(opts)
+    servern = opts[1]
+    opts = opts[1:]
     if type(servern) is str:
       server = self.restoreServer(servern)
     if server is None:
       print 'server %s does not exist!' % servern
       return
     print 'starting server: ' + server.name
+
+    cmd = [self.javacmd]
+    cmd.extend(opts)
+    cmd.append('-jar')
+    mod = self.modRegistry[server.mod]
+    cmd.append(mod)
+
     serverLog = open('server.out', 'wb')
-    subprocess.check_call(java_cmd, server_start_base_opts + opts, stdout=serverLog, stderr=serverLog)
+    subprocess.check_call(cmd, stdout = serverLog, stderr = serverLog)
 
   def stopServer(self, server):
     pass
@@ -95,8 +109,10 @@ class Engine:
       print str(prop)
     pass
 
-  def invokeJava(self, cmds):
-    pass
+  def listServers(self, filtr):
+    for server in self.servers:
+      print '* ',
+      print server.name
 
   def restoreServer(self, serverName):
     server = [item for item in self.servers if item.name == serverName]
@@ -105,9 +121,10 @@ class Engine:
 
 class Server:
   started = False
-  def __init__(self, name, props):
+  def __init__(self, name, props, mod = 'vanilla'):
     self.name = name
     self.props = props
+    self.mod = mod
 
   def updateProp(self, key, value):
     self.prop[key] = value
@@ -121,6 +138,7 @@ class Server:
 
 ########## DO STUFF HERE ##########
 servers = loadServers()
+servers[0].mod = 'tekkit'
 eng = Engine(servers)
 
 shell = Shell(eng)
