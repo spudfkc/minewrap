@@ -80,6 +80,9 @@ class Engine:
     self.servers = servers
 
   def startServer(self, opts):
+    ''' starts the named server with any given options
+        also adds the new process to the list of running
+        server processes '''
     servern = opts[1]
     opts = opts[2:]
     if type(servern) is str:
@@ -104,6 +107,7 @@ class Engine:
     self.serverProcesses[server.name] = serverProcess
 
   def stopServer(self, opts):
+    ''' stops the given server ''' 
     server = opts[1]
     if type(server) is str:
       server = self.restoreServer(server)
@@ -114,35 +118,36 @@ class Engine:
     serverProcess = self.serverProcesses[server.name]
     print 'stopping server: ' + server.name
     serverProcess.terminate()
-    
 
   def restartServer(self, server, opts=[]):
-    stopServer(server)
-    startServer(server, opts)
+    pass
 
   def infoServer(self, server):
-    for prop in server.props:
-      print str(prop)
     pass
 
   def listServers(self, filtr):
     for server in self.servers:
       print '* ',
       print server.name
+      # add status to show if server is running or not
 
   def restoreServer(self, serverName):
+    ''' restores the server object from the given server name '''
     server = [item for item in self.servers if item.name == serverName]
     if len(server) == 1:
       return server[0]
 
 class Server:
-  started = False
+  ''' contains all the attributes of a server, but holds no state '''
+
   def __init__(self, name, props, mod = 'vanilla'):
     self.name = name
     self.props = props
     self.mod = mod
 
   def updateProp(self, key, value):
+    ''' updates a property on the server in memory, to save you 
+        will need to write out the props '''
     self.prop[key] = value
 
   def writeProps(self):
