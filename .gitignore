@@ -39,3 +39,7 @@ nosetests.xml
 
 # project-specific
 /servers
+/backups
+/downloads
+server.out
+
