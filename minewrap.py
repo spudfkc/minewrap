@@ -115,21 +115,29 @@ class Engine:
       print 'server %s does not exist!' % servern 
       return
     print '[DEBUG] ' + str(server)
-    serverProcess = self.serverProcesses[server.name]
-    print 'stopping server: ' + server.name
-    serverProcess.terminate()
+    if server.name in self.serverProcesses: 
+      serverProcess = self.serverProcesses[server.name]
+      print 'stopping server: ' + server.name
+      serverProcess.terminate()
+    else:
+      print 'server: ' + server.name + ' not found'
 
-  def restartServer(self, server, opts=[]):
-    pass
+  def restartServer(self, opts):
+    print 'restarting server'
+    self.stopServer(opts)
+    self.startServer(opts)
 
-  def infoServer(self, server):
-    pass
+  def infoServer(self, opts):
+    pass 
 
   def listServers(self, filtr):
     for server in self.servers:
       print '* ',
-      print server.name
-      # add status to show if server is running or not
+      print server.name,
+      status = 'NOT STARTED'
+      if server.name in self.serverProcesses: 
+        status = 'RUNNING'
+      print '\t[' + status + ']'
 
   def restoreServer(self, serverName):
     ''' restores the server object from the given server name '''
