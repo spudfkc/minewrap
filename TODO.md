@@ -1,9 +1,20 @@
-ensure directories exist  
 
-collect links for mods and versions  
+* ensure directories exist  
 
-backup feature
+* collect links for mods and versions  
 
-move server state from Engine to Server
+* backup feature  
 
-investigate alternative to passing 'opts'
+* move server state from Engine to Server  
+
+* investigate alternative to passing 'opts'  
+
+* look into Candela  
+
+** exception handling!  
+
+* status detection w/enums  
+
+* tail server log in terminal  
+
+* send commands to server from terminal  

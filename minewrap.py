@@ -20,8 +20,15 @@ def parseProps(filepath):
     props[line[0]] = line[1]
   return props
 
+def writeProps(filepath, **props):
+  propsFile = open(filepath, 'w')
+  for prop in props:
+    propsFile.write(prop+'='+props[prop]+'\n')
+  propsFile.close()
+
 def loadServers():
-  ''' loads all the servers from the servers dir 
+  '''
+    loads all the servers from the servers dir 
     a server.properties file must exist in the 
     server directory for the server to be 
     recognized
@@ -119,6 +126,7 @@ class Engine:
       serverProcess = self.serverProcesses[server.name]
       print 'stopping server: ' + server.name
       serverProcess.terminate()
+      del self.serverProcesses[server.name]
     else:
       print 'server: ' + server.name + ' not found'
 
@@ -128,7 +136,27 @@ class Engine:
     self.startServer(opts)
 
   def infoServer(self, opts):
-    pass 
+    server = opts[1]
+    if type(server) is str:
+      server = self.restoreServer(server)
+    if server is None:
+      print 'server %s does not exist!' % servern
+      return
+    print '''
+      ========================================
+      ==  %s
+      ==
+      ---- This is all TODO ----
+      ==  Players: 0/999
+      ==  Ops: #
+      ==    list ops here
+      ==  wolds 
+      
+      == == == ==
+      ==  host
+      ==  port
+      ==  
+      ''' % server.name
 
   def listServers(self, filtr):
     for server in self.servers:
@@ -159,11 +187,29 @@ class Server:
     self.prop[key] = value
 
   def writeProps(self):
-    pass
+    writeProps('servers'+os.sep+self.server.name+os.sep+'server.properties', self.props)
 
   def loadProps(self):
-    pass
+    self.props = parseProps('servers'+os.sep+self.server.name+os.sep+'server.properties')
 
+  def findMod(self):
+    foundJars = []
+    for files in os.listdir('servers'+os.sep+self.server.name):
+      if files.endswith('.jar'):
+        foundJars.append(files)
+    if len(foundJars) > 1:
+      # TODO exception?
+      print 'warning - found multiple jars for server'
+      if 'minecraft_server.jar' in foundJars:
+        print 'defaulting to vanilla'
+        self.mod = 'vanilla'
+      else: 
+        print 'defaulting to first found'
+        self.mod = foundJars[0]
+    elif len(foundJars) < 1:
+      # TODO exception
+      print 'error - no jars found for server'
+      self.mod = None
 
 ########## DO STUFF HERE ##########
 servers = loadServers()
