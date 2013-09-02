@@ -7,11 +7,35 @@ class Engine:
   javacmd = 'java'
   modRegistry = {}
   serverProcesses = {}
+  servers = []
 
-  def __init__(self, severs):
-    self.servers = servers
+  def __init__(self):
+    _loadServers()
+
+  def _loadServers(self):
+    '''
+    creates servers for all the servers in the 'servers' directory
+
+    A server object will attempt to be made if a server.properties
+    file exists in the directory.
+    '''
+    serversDir = 'servers'
+    if not os.path.exists(serversDir):
+      raise UserWarning('servers directory not found')
+    for item in os.listdir(serversDir):
+      itemPath = serverDir + os.sep + item
+      propsPath = itemPath + os.sep + 'server.properties'
+      if os.path.isdir(itemPath) and os.path.exists(propsPath):
+        self.servers.append(Server(item))
 
   def startServer(self, server, opts=[], logfile='server.out'):
+    '''
+    Starts the given server
+
+    This will start a server with the specified options. 
+    The server is started in a subprocess and a file, 'server.out'
+    is created in the server's directory to handle logging.
+    '''
     if not 'nogui' in opts:
       opts.append('nogui')
     cmd = [self.javacmd]
@@ -71,6 +95,3 @@ class Engine:
       raise UserWarning("Multiple servers found with name: " + serverName)
     else:
       raise UserWarning("No server found with name: " + serverName)
-    
-  def build(self, cmd):
-    raise NotImplementedError("TODO")

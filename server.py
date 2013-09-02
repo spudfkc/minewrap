@@ -3,12 +3,12 @@ import util
 
 
 class Server:
-  def __init__(self, name, props, mod=None):
+  def __init__(self, name, mod=None):
     self.name = name
-    self.props = props
     self.mod = mod
     self.path = 'servers' + os.sep + self.name
     self.status = 'unknown'
+    self.loadProps()
 
   def updateProp(self, key, value):
     '''
@@ -24,7 +24,7 @@ class Server:
     '''
     util.writePropsFile(self.props, self.path + os.sep + 'server.properties')
 
-  def loadProps(self, filepath):
+  def loadProps(self):
     '''
     Loads the server.properties file for the server into the app
     '''

@@ -2,8 +2,16 @@ import util
 import engine
 
 class Shell:
+
   def __init__(self, engine):
     self.engine = engine
+    cmds = {
+      'start' : engine.startServer,
+      'stop'  : engine.stopServer,
+      'restart' : engine.restartServer,
+      'info' : engine.infoServer,
+      'list' : engine.listServers
+    }
 
   def getInput(self):
     return raw_input('>').split()
@@ -11,10 +19,17 @@ class Shell:
   def start(self):
     while(True):
       i = self.getInput()
-      if len(i) > 0:
-        if i == 'exit':
-          engine.shutdown(exit(0))
-        try:
-          engine.build(i)
-        except ValueError:
-          util.log('command not recognized: ' + cmd[0], '')
+      self.process(i)
+  
+  def process(self, *i):
+    if len(i) > 0:
+      if i[0] == 'exit':
+        engine.shutdown(exit(0))
+      if i[0] in self.cmds:
+        f = cmds[i[0]]
+        if len(i) > 1:
+          f(i[:1])
+        else: 
+          f()
+      else:
+        util.log('command not recognized: ' + i[0], '')
