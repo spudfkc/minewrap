@@ -10,7 +10,7 @@ class Engine:
   servers = []
 
   def __init__(self):
-    _loadServers()
+    self._loadServers()
 
   def _loadServers(self):
     '''
@@ -23,10 +23,10 @@ class Engine:
     if not os.path.exists(serversDir):
       raise UserWarning('servers directory not found')
     for item in os.listdir(serversDir):
-      itemPath = serverDir + os.sep + item
+      itemPath = serversDir + os.sep + item
       propsPath = itemPath + os.sep + 'server.properties'
       if os.path.isdir(itemPath) and os.path.exists(propsPath):
-        self.servers.append(Server(item))
+        self.servers.append(server.Server(item))
 
   def startServer(self, server, opts=[], logfile='server.out'):
     '''

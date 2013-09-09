@@ -5,7 +5,7 @@ class Shell:
 
   def __init__(self, engine):
     self.engine = engine
-    cmds = {
+    self.cmds = {
       'start' : engine.startServer,
       'stop'  : engine.stopServer,
       'restart' : engine.restartServer,
@@ -23,10 +23,11 @@ class Shell:
   
   def process(self, *i):
     if len(i) > 0:
+      i = i[0]
       if i[0] == 'exit':
         engine.shutdown(exit(0))
       if i[0] in self.cmds:
-        f = cmds[i[0]]
+        f = self.cmds[i[0]]
         if len(i) > 1:
           f(i[:1])
         else: 

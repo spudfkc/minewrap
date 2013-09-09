@@ -1,4 +1,5 @@
 import os
+import json
 
 def writePropsFile(props, filepath):
   '''
@@ -47,3 +48,9 @@ def enum(**enums):
   Creates and return an Enum type
   '''
   return type('Enum', (), enums)
+
+def readJsonFile(filepath):
+  f = open(filepath)
+  data = json.load(f)
+  f.close()
+  return data
