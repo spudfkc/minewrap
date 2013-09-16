@@ -28,6 +28,22 @@ class Engine:
       if os.path.isdir(itemPath) and os.path.exists(propsPath):
         self.servers.append(server.Server(item))
 
+  def generateCommands(self):
+    '''
+    Returns all available commands that this engine can run
+    '''
+    cmds = { 
+      'start' : self.startServer, 
+      'stop'  : self.stopServer, 
+      'restart' : self.restartServer, 
+      'info' : self.infoServer, 
+      'list' : self.listServers, 
+      'download-mod' : self.downloadMod, 
+      'create-server' : self.createServer, 
+      'delete-server' : self.deleteServer 
+    } 
+    return cmds
+
   def startServer(self, server, opts=[], logfile='server.out'):
     '''
     Starts the given server
@@ -86,7 +102,19 @@ class Engine:
     if not callback is None:
       callback()
 
+  def downloadMod(self, modName, modVersion):
+    pass
+
+  def createServer(self, serverName, props, mod='vanilla'):
+    pass
+
+  def deleteServer(self, serverName):
+    pass
+
   def restoreServer(self, serverName):
+    '''
+    Returns a server object given a server name
+    '''
     server = [item for item in self.servers if item.name == serverName]
     found = len(server)
     if found == 1:

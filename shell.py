@@ -5,21 +5,18 @@ class Shell:
 
   def __init__(self, engine):
     self.engine = engine
-    self.cmds = {
-      'start' : engine.startServer,
-      'stop'  : engine.stopServer,
-      'restart' : engine.restartServer,
-      'info' : engine.infoServer,
-      'list' : engine.listServers
-    }
+    self.cmds = engine.generateCommands()
 
   def getInput(self):
     return raw_input('>').split()
 
   def start(self):
-    while(True):
-      i = self.getInput()
-      self.process(i)
+    try:
+      while(True):
+        i = self.getInput()
+        self.process(i)
+    except KeyboardInterrupt:
+      util.log('\nShutting down...', 'INFO')
   
   def process(self, *i):
     if len(i) > 0:
@@ -28,9 +25,12 @@ class Shell:
         engine.shutdown(exit(0))
       if i[0] in self.cmds:
         f = self.cmds[i[0]]
-        if len(i) > 1:
-          f(i[:1])
-        else: 
-          f()
+        try:
+          if len(i) > 1:
+            f(i[:1])
+          else: 
+            f()
+        except TypeError as e:
+          print "Bad command: " + str(e)
       else:
         util.log('command not recognized: ' + i[0], '')
