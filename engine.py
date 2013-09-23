@@ -77,6 +77,8 @@ class Engine:
     self.startServer(server, opts)
 
   def infoServer(self, server):
+    # refactor this to have a fn that builds/returns
+    # the info string then this will print it.
     print '''
       ==========
       == %s 
@@ -106,9 +108,21 @@ class Engine:
     pass
 
   def createServer(self, serverName, props, mod='vanilla'):
+    '''
+    check cache for mod + version
+      download if not there
+    create server directory
+    copy mod
+    put props 
+    '''
     pass
 
   def deleteServer(self, serverName):
+    '''
+    make sure server exists
+    check if server is running - ask to shutdown first?
+    delete directory
+    '''
     pass
 
   def restoreServer(self, serverName):
