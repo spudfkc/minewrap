@@ -79,7 +79,7 @@ class Engine:
   def infoServer(self, server):
     # refactor this to have a fn that builds/returns
     # the info string then this will print it.
-    print '''
+    return '''
       ==========
       == %s 
       ==

@@ -3,9 +3,8 @@ import engine
 
 class Shell:
 
-  def __init__(self, engine):
-    self.engine = engine
-    self.cmds = engine.generateCommands()
+  def __init__(self, cliHelper):
+    self.cliHelper = cliHelper
 
   def getInput(self):
     return raw_input('>').split()
@@ -22,9 +21,9 @@ class Shell:
     if len(i) > 0:
       i = i[0]
       if i[0] == 'exit':
-        engine.shutdown(exit(0))
-      if i[0] in self.cmds:
-        f = self.cmds[i[0]]
+        cliHelper.shutdown(exit(0))
+      if i[0] in self.cliHelper.cmds:
+        f = self.cliHelper.cmds[i[0]]
         try:
           if len(i) > 1:
             f(i[:1])
